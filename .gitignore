@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+logs/
+*.log
+venv/
+.env.*
+.DS_Store
+configs/*.yaml.localdata/

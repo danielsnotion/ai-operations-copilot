@@ -1,0 +1,8 @@
+[
+  {
+    "query": "Why did revenue drop?",
+    "response": "Final Answer:\nThe revenue dropped because the recent average revenue (7,240) is significantly lower than the earlier average revenue (10,260), indicating a clear downward trend in sales performance.\n\nExplanation:\nThe data analysis shows a notable decline in average revenue from 10,260 to 7,240. This decrease could be due to several factors such as reduced sales volume, changes in pricing strategy, adverse market conditions, or internal operational challenges. To pinpoint the exact reasons, further detailed examination of sales by product/category, pricing changes, market trends, and operational metrics is recommended.\n\nConfidence Level:\nHigh \u2013 The quantitative data clearly shows a revenue decline, though deeper analysis is needed to identify the root causes.",
+    "feedback": "negative",
+    "timestamp": "2026-04-09T13:02:43.972622"
+  }
+]

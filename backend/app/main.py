@@ -1,0 +1,91 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+import time
+
+from cli.agent_v2 import AgentV2
+from configs.logging_config import setup_logger
+from configs.settings import config
+from fastapi import UploadFile, File
+from backend.app.rag.embedding_manager import EmbeddingManager
+
+app = FastAPI()
+logger = setup_logger("fastapi")
+
+agent = AgentV2()
+
+MODEL_NAME = config["llm"]["model"]
+EMBD_MODEL_NAME = config["embedding"]["model"]
+embedding_manager = EmbeddingManager()
+
+
+class QueryRequest(BaseModel):
+    query: str
+    llm_model: str = MODEL_NAME
+    framework: str = "LangGraph"
+    api_key: str | None = None
+    auth_mode: str | None = None
+
+
+@app.post("/ask")
+def ask_agent(request: QueryRequest):
+    start_time = time.time()
+
+    try:
+        response = agent.run(request.query,
+                             llm_model=request.llm_model,
+                             framework=request.framework,
+                             api_key=request.api_key,
+                             auth_mode=request.auth_mode
+                             )
+        latency = time.time() - start_time
+
+        logger.info(f"Latency: {latency:.2f}s")
+
+        return {
+            "response": response,
+            "latency": latency
+        }
+
+    except Exception as e:
+        logger.exception("Unhandled error occurred")
+
+        return {
+            "response": "The system encountered an issue. Please try again later.",
+            "error": "internal_error"
+        }
+
+from pydantic import BaseModel
+
+class FeedbackRequest(BaseModel):
+    query: str
+    response: str
+    feedback: str
+
+
+@app.post("/feedback")
+def save_feedback(request: FeedbackRequest):
+    agent.feedback_store.save_feedback(
+        request.query,
+        request.response,
+        request.feedback
+    )
+    return {"status": "saved"}
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    file_path = f"data/{file.filename}"
+
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+
+    embedding_manager.add_csv(file_path, file.filename)
+
+    return {"message": "Embedding created successfully"}
+
+@app.get("/metadata")
+def get_metadata():
+    import json
+    try:
+        return json.load(open("data/metadata.json"))
+    except:
+        return []

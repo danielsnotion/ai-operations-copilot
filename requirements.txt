@@ -1,0 +1,14 @@
+pandas
+python-dotenv
+openai
+faiss-cpu 
+sentence-transformers
+fastapi
+uvicorn
+streamlit
+requests
+pyyaml
+python-multipart
+langgraph
+crewai
+torchvision
