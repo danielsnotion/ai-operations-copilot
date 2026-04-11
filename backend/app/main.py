@@ -11,6 +11,16 @@ from backend.app.rag.embedding_manager import EmbeddingManager
 app = FastAPI()
 logger = setup_logger("fastapi")
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 agent = AgentV2()
 
 MODEL_NAME = config["llm"]["model"]
