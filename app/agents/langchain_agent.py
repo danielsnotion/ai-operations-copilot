@@ -1,10 +1,13 @@
+import os
+
+from dotenv import load_dotenv
 from openai import OpenAI
 from configs.settings import config
 from configs.logging_config import setup_logger
-
+load_dotenv()
 logger = setup_logger("langchain_agent")
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 MODEL_NAME = config["llm"]["model"]
 
