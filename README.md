@@ -248,16 +248,13 @@ Large:  https://huggingface.co/datasets/daniel1028/ai-operations-copilot-data/bl
 ```text
 ai-operations-copilot/
 │
-├── backend/
-│   ├── app/
-│   │   ├── agents/
-│   │   ├── tools/
-│   │   ├── rag/
-│   │   ├── core/
-│   │   └── main.py
+├── app/
+│   ├── agents/
+│   ├── tools/
+│   ├── rag/
+│   ├── core/
+│   └── main.py
 │
-├── ui/
-│   └── app.py
 │
 ├── cli/
 │   └── agent_v2.py
