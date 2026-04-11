@@ -5,7 +5,6 @@ import time
 from configs.logging_config import setup_logger
 from configs.settings import config
 from fastapi import UploadFile, File
-from app.rag.embedding_manager import EmbeddingManager
 
 app = FastAPI()
 logger = setup_logger("fastapi")
@@ -21,6 +20,8 @@ app.add_middleware(
 )
 
 agent = None
+embedding_manager = None
+
 def get_agent():
     global agent
     if agent is None:
@@ -28,9 +29,15 @@ def get_agent():
         agent = AgentV2()
     return agent
 
+def get_embedding_manager():
+    global embedding_manager
+    if embedding_manager is None:
+        from app.rag.embedding_manager import EmbeddingManager
+        embedding_manager = EmbeddingManager()
+    return embedding_manager
+
 MODEL_NAME = config["llm"]["model"]
 EMBD_MODEL_NAME = config["embedding"]["model"]
-embedding_manager = EmbeddingManager()
 
 
 class QueryRequest(BaseModel):
@@ -93,7 +100,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     with open(file_path, "wb") as f:
         f.write(await file.read())
-
+    embedding_manager = get_embedding_manager()
     embedding_manager.add_csv(file_path, file.filename)
 
     return {"message": "Embedding created successfully"}
