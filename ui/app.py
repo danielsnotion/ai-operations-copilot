@@ -6,7 +6,7 @@ import time
 import os
 
 load_dotenv()
-
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
 st.set_page_config(layout="wide")
 st.title("🤖 AI Operations Copilot")
 
@@ -148,7 +148,7 @@ with tab1:
 
                     with col1:
                         if st.button("👍 Helpful", key=f"up_{msg['id']}"):
-                            requests.post("http://127.0.0.1:8000/feedback", json={
+                            requests.post(f"{BACKEND_URL}/feedback", json={
                                 "query": msg["query"],
                                 "response": msg["content"],
                                 "feedback": "positive"
@@ -159,7 +159,7 @@ with tab1:
 
                     with col2:
                         if st.button("👎 Not Helpful", key=f"down_{msg['id']}"):
-                            requests.post("http://127.0.0.1:8000/feedback", json={
+                            requests.post(f"{BACKEND_URL}/feedback", json={
                                 "query": msg["query"],
                                 "response": msg["content"],
                                 "feedback": "negative"
@@ -222,7 +222,7 @@ with tab1:
 
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/ask",
+                f"{BACKEND_URL}/ask",
                 json={
                     "query": query,
                     "llm_model": llm_model,
@@ -271,7 +271,7 @@ with tab2:
             with st.spinner("Processing..."):
                 try:
                     requests.post(
-                        "http://127.0.0.1:8000/upload",
+                        f"{BACKEND_URL}/upload",
                         files={"file": uploaded_file}
                     )
                     st.success("Embedding created successfully!")
@@ -281,7 +281,7 @@ with tab2:
     st.subheader("📊 Uploaded Data Metadata")
 
     try:
-        metadata = requests.get("http://127.0.0.1:8000/metadata").json()
+        metadata = requests.get(f"{BACKEND_URL}/metadata").json()
         if metadata:
             st.table(metadata)
         else:
