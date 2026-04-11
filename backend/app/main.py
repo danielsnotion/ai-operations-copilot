@@ -21,7 +21,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-agent = AgentV2()
+agent = None
+def get_agent():
+    global agent
+    if agent is None:
+        agent = AgentV2()
+    return agent
 
 MODEL_NAME = config["llm"]["model"]
 EMBD_MODEL_NAME = config["embedding"]["model"]
@@ -39,7 +44,7 @@ class QueryRequest(BaseModel):
 @app.post("/ask")
 def ask_agent(request: QueryRequest):
     start_time = time.time()
-
+    agent = get_agent()
     try:
         response = agent.run(request.query,
                              llm_model=request.llm_model,
@@ -74,6 +79,7 @@ class FeedbackRequest(BaseModel):
 
 @app.post("/feedback")
 def save_feedback(request: FeedbackRequest):
+    agent = get_agent()
     agent.feedback_store.save_feedback(
         request.query,
         request.response,
