@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import time
 
-from cli.agent_v2 import AgentV2
 from configs.logging_config import setup_logger
 from configs.settings import config
 from fastapi import UploadFile, File
@@ -25,6 +24,7 @@ agent = None
 def get_agent():
     global agent
     if agent is None:
+        from cli.agent_v2 import AgentV2
         agent = AgentV2()
     return agent
 

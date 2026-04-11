@@ -1,3 +1,12 @@
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+port = 10000
+
+[browser]
+gatherUsageStats = false
+
 [theme]
 primaryColor="#4F46E5"
 backgroundColor="#F9FAFB"
