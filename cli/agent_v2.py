@@ -3,16 +3,16 @@ from unittest import result
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from backend.app.agents.crewai_agent import CrewAIAgent
-from backend.app.rag.embedding_manager import EmbeddingManager
-from backend.app.tools.tool_registry import ToolRegistry
-from backend.app.core.memory import ConversationMemory
-from backend.app.agents.planner import Planner
+from app.agents.crewai_agent import CrewAIAgent
+from app.rag.embedding_manager import EmbeddingManager
+from app.tools.tool_registry import ToolRegistry
+from app.core.memory import ConversationMemory
+from app.agents.planner import Planner
 from configs.logging_config import setup_logger
-from backend.app.core.feedback_store import FeedbackStore
+from app.core.feedback_store import FeedbackStore
 from configs.settings import config
-from backend.app.agents.langgraph_agent import langgraph_app
-from backend.app.agents.langchain_agent import LangChainAgent
+from app.agents.langgraph_agent import langgraph_app
+from app.agents.langchain_agent import LangChainAgent
 load_dotenv()
 
 logger = setup_logger("agent_v2")

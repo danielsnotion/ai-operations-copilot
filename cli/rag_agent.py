@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from backend.app.rag.retriever import DataRetriever
+from app.rag.retriever import DataRetriever
 from configs.logging_config import setup_logger
 from configs.settings import config
 

@@ -2,7 +2,7 @@ import os
 from urllib import response
 from dotenv import load_dotenv
 from openai import OpenAI
-from backend.app.tools.tool_registry import ToolRegistry
+from app.tools.tool_registry import ToolRegistry
 from configs.logging_config import setup_logger
 from configs.settings import config
 
