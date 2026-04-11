@@ -9,3 +9,10 @@ venv/
 .env.*
 .DS_Store
 configs/*.yaml.localdata/
+.venv/
+.idea/
+.vscode/
+data/*.pkl
+data/*.index
+data/*.faiss
+data/*.json
