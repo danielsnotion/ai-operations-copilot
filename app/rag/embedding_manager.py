@@ -5,6 +5,9 @@ import pandas as pd
 import json
 from datetime import datetime
 from sentence_transformers import SentenceTransformer
+from configs.logging_config import setup_logger
+
+logger = setup_logger("embedding_manager")
 
 INDEX_PATH = "data/faiss.index"
 DOCS_PATH = "data/docs.pkl"
@@ -58,7 +61,32 @@ class EmbeddingManager:
 
         json.dump(metadata, open(META_PATH, "w"), indent=2)
 
-    def search(self, query, top_k=3):
-        query_embedding = self.model.encode([query])
-        distances, indices = self.index.search(query_embedding, top_k)
-        return [self.documents[i] for i in indices[0]]
+    def is_ready(self):
+        return self.index is not None and len(self.documents) > 0
+
+    # def search(self, query, top_k=3):
+    #     query_embedding = self.model.encode([query])
+    #     distances, indices = self.index.search(query_embedding, top_k)
+    #     return [self.documents[i] for i in indices[0]]
+
+    def search(self, query: str, k: int = 3):
+        # 🚨 No embeddings loaded
+        if not self.index or not self.documents:
+            return []
+
+        try:
+            query_embedding = self.model.encode([query])
+            distances, indices = self.index.search(query_embedding, k)
+
+            # ✅ Safe filtering of valid indices
+            results = []
+            for i in indices[0]:
+                if 0 <= i < len(self.documents):
+                    results.append(self.documents[i])
+
+            return results
+
+        except Exception as e:
+            logger = setup_logger("embedding_manager")
+            logger.error(f"[Embedding Search Error]: {e}")
+            return []

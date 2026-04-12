@@ -26,7 +26,8 @@ def get_agent():
     global agent
     if agent is None:
         from cli.agent_v2 import AgentV2
-        agent = AgentV2()
+        emb_mgr = get_embedding_manager()
+        agent = AgentV2(embedding_manager=emb_mgr)
     return agent
 
 def get_embedding_manager():
@@ -35,6 +36,11 @@ def get_embedding_manager():
         from app.rag.embedding_manager import EmbeddingManager
         embedding_manager = EmbeddingManager()
     return embedding_manager
+
+def reset_services():
+    global agent, embedding_manager
+    agent = None
+    embedding_manager = None
 
 MODEL_NAME = config["llm"]["model"]
 EMBD_MODEL_NAME = config["embedding"]["model"]
@@ -100,6 +106,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     with open(file_path, "wb") as f:
         f.write(await file.read())
+
+     # Reset everything BEFORE rebuilding
+    reset_services()
     embedding_manager = get_embedding_manager()
     embedding_manager.add_csv(file_path, file.filename)
 

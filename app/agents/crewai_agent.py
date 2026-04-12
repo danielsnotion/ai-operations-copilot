@@ -39,8 +39,15 @@ class CrewAIAgent:
         self.add_trace(trace, "Loaded conversation memory")
 
         # -------- RETRIEVAL -------- #
-        docs = self.embedding_manager.search(query)
-        rag_context = "\n".join(docs)
+        if not self.embedding_manager.is_ready():
+            self.add_trace(trace, "Vector DB not initialized")
+            docs = []
+        else:
+            docs = self.embedding_manager.search(query)
+        if not docs:
+            self.add_trace(trace, "No relevant documents found (empty vector DB)")
+
+        rag_context = "\n".join(docs) if docs else "No additional context available."
         self.add_trace(trace, f"Retrieved {len(docs)} records from vector DB")
 
         # -------- FEEDBACK -------- #
@@ -89,6 +96,9 @@ class CrewAIAgent:
                 {rag_context}
 
                 Create a clear step-by-step plan to answer the query.
+
+                If no rag_context is available, answer based on general reasoning.
+
                 """,
                     expected_output="A structured plan explaining how to solve the user query",
                     agent=planner_agent
@@ -129,6 +139,8 @@ class CrewAIAgent:
                 - Final Answer
                 - Explanation
                 - Confidence Level
+                
+                If no rag_context is available, answer based on general reasoning.
                 """,
                     expected_output="Final structured answer with explanation and confidence level",
                     agent=analyst_agent

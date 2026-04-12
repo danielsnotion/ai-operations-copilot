@@ -38,8 +38,16 @@ class LangChainAgent:
         self.add_trace(trace, "Loaded conversation memory")
 
         # -------- STEP 2: RETRIEVAL -------- #
-        docs = self.embedding_manager.search(query)
-        rag_context = "\n".join(docs)
+        if not self.embedding_manager.is_ready():
+            self.add_trace(trace, "Vector DB not initialized")
+            docs = []
+        else:
+            docs = self.embedding_manager.search(query)
+
+        if not docs:
+            self.add_trace(trace, "No relevant documents found (empty vector DB)")
+
+        rag_context = "\n".join(docs) if docs else "No additional context available."
         self.add_trace(trace, f"Retrieved {len(docs)} records from vector DB")
 
         # -------- STEP 3: PLANNING -------- #
@@ -105,6 +113,8 @@ Provide:
 - Final Answer
 - Explanation
 - Confidence Level
+
+If no rag_context is available, answer based on general reasoning.
 """
 
         response = client.chat.completions.create(

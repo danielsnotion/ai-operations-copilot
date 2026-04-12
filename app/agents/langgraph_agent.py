@@ -59,8 +59,18 @@ def load_memory(state: AgentState):
 
 def retrieve(state: AgentState):
     docs = embedding_manager.search(state["query"])
-    state["retrieved_data"] = "\n".join(docs)
+    if not embedding_manager.is_ready():
+            state["trace"].append("Vector DB not initialized")
+            docs = []
+    else:
+        docs = embedding_manager.search(state["query"])
 
+    if not docs:
+        state["trace"].append("No relevant documents found (empty vector DB)")
+
+    context = "\n".join(docs) if docs else "No additional context available."
+    state["retrieved_data"] = context
+    
     add_trace(state, f"Retrieved {len(docs)} records from vector DB")
 
     return state
@@ -164,6 +174,9 @@ Provide:
 - Final Answer
 - Explanation
 - Confidence Level
+
+If no context is available, answer based on general reasoning.
+
 """
 
     response = client.chat.completions.create(

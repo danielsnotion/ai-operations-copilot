@@ -19,14 +19,14 @@ logger = setup_logger("agent_v2")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 MODEL_NAME = config["llm"]["model"]
 EMBD_MODEL_NAME = config["embedding"]["model"]
-embedding_manager = EmbeddingManager(EMBD_MODEL_NAME)
+embd_mgr = EmbeddingManager(EMBD_MODEL_NAME)
 class AgentV2:
-    def __init__(self):
+    def __init__(self, embedding_manager=None):
         self.tools = ToolRegistry()
         self.memory = ConversationMemory()
         self.planner = Planner()
         self.feedback_store = FeedbackStore()
-        self.embedding_manager = embedding_manager
+        self.embedding_manager = embedding_manager if embedding_manager else embd_mgr
         self.crewai_agent = CrewAIAgent( self.tools, self.memory, self.planner, self.embedding_manager, self.feedback_store )
         self.langchain_agent = LangChainAgent( self.tools, self.memory, self.planner, self.embedding_manager, self.feedback_store )
 
