@@ -2,6 +2,7 @@ import os
 
 from crewai import Agent, Task, Crew
 from dotenv import load_dotenv
+from langsmith import traceable
 from openai import OpenAI
 from configs.settings import config
 from configs.logging_config import setup_logger
@@ -28,6 +29,7 @@ class CrewAIAgent:
         logger.info(f"[TRACE] {message}")
 
     # ---------------- RUN ---------------- #
+    @traceable( name="CrewAIAgent_Run", metadata={"framework": "CrewAI", "app": "copilot"})
     def run(self, query, llm_model=MODEL_NAME):
 
         trace = []

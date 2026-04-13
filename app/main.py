@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 import time
@@ -5,11 +7,16 @@ import time
 from configs.logging_config import setup_logger
 from configs.settings import config
 from fastapi import UploadFile, File
+from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 app = FastAPI()
 logger = setup_logger("fastapi")
 
-from fastapi.middleware.cors import CORSMiddleware
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "ai-operations-copilot"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY", "")
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,12 +60,28 @@ class QueryRequest(BaseModel):
     api_key: str | None = None
     auth_mode: str | None = None
 
+class FeedbackRequest(BaseModel):
+    query: str
+    response: str
+    feedback: str
 
 @app.post("/ask")
 def ask_agent(request: QueryRequest):
     start_time = time.time()
     agent = get_agent()
     try:
+        if not request.query.strip():
+            latency = time.time() - start_time
+            logger.info(f"Latency: {latency:.2f}s")
+            return {"response": "Query cannot be empty",
+                    "latency": latency}
+
+        if len(request.query) > 1000:
+            latency = time.time() - start_time
+            logger.info(f"Latency: {latency:.2f}s")
+            return {"response": "Query too long",
+                    "latency": latency}
+
         response = agent.run(request.query,
                              llm_model=request.llm_model,
                              framework=request.framework,
@@ -66,7 +89,6 @@ def ask_agent(request: QueryRequest):
                              auth_mode=request.auth_mode
                              )
         latency = time.time() - start_time
-
         logger.info(f"Latency: {latency:.2f}s")
 
         return {
@@ -82,13 +104,24 @@ def ask_agent(request: QueryRequest):
             "error": "internal_error"
         }
 
-from pydantic import BaseModel
 
-class FeedbackRequest(BaseModel):
-    query: str
-    response: str
-    feedback: str
 
+@app.post("/ask-stream")
+def ask_agent_stream(request: QueryRequest):
+
+    def generate():
+        agent = get_agent()
+
+        for chunk in agent.run_stream(
+            request.query,
+            llm_model=request.llm_model,
+            framework=request.framework,
+            api_key=request.api_key,
+            auth_mode=request.auth_mode
+        ):
+            yield chunk
+
+    return StreamingResponse(generate(), media_type="text/plain")
 
 @app.post("/feedback")
 def save_feedback(request: FeedbackRequest):

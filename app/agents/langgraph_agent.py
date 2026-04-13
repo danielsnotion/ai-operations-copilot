@@ -1,6 +1,8 @@
 from langgraph.graph import StateGraph
 from typing import TypedDict, List, Any
 
+from langsmith import traceable
+
 from app.rag.embedding_manager import EmbeddingManager
 from app.tools.tool_registry import ToolRegistry
 from app.core.memory import ConversationMemory
@@ -56,7 +58,7 @@ def load_memory(state: AgentState):
 
     return state
 
-
+@traceable( name="LangGraphAgent_Retrieve", metadata={"framework": "LangGraph", "app": "copilot"})
 def retrieve(state: AgentState):
     docs = embedding_manager.search(state["query"])
     if not embedding_manager.is_ready():

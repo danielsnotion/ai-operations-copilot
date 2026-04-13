@@ -1,6 +1,7 @@
 import os
 from unittest import result
 from dotenv import load_dotenv
+from langsmith import traceable
 from openai import OpenAI
 
 from app.agents.crewai_agent import CrewAIAgent
@@ -29,7 +30,22 @@ class AgentV2:
         self.embedding_manager = embedding_manager if embedding_manager else embd_mgr
         self.crewai_agent = CrewAIAgent( self.tools, self.memory, self.planner, self.embedding_manager, self.feedback_store )
         self.langchain_agent = LangChainAgent( self.tools, self.memory, self.planner, self.embedding_manager, self.feedback_store )
+  
+    @traceable(name="AgentV2_Run_Stream")
+    def run_stream(self, query, llm_model, framework="LangGraph", api_key=None, auth_mode=None):
 
+        logger.info(f"[STREAM Framework]: {framework}")
+
+        if framework == "LangChain":
+            return self.langchain_agent.run_stream(query, llm_model)
+
+        # fallback → no streaming support
+        def fallback():
+            result = self.run(query, llm_model, framework, api_key, auth_mode)
+            yield result["final_answer"]
+
+        return fallback()
+    @traceable(name="AgentV2_Run")
     def run(self, query, llm_model, framework="LangGraph", api_key=None, auth_mode=None):
         logger.info(f"[Framework Selected]: {framework}")
         if auth_mode == "external" and api_key:
@@ -52,7 +68,7 @@ class AgentV2:
             return self.run_langgraph(query, llm_model)
     
    
-    
+    @traceable( name="AgentV2_Run", metadata={"framework": "LangGraph", "app": "copilot"})
     def run_langgraph(self, query, llm_model=MODEL_NAME):
 
         result = langgraph_app.invoke({
