@@ -12,6 +12,7 @@ configs/*.yaml.localdata/
 .venv/
 .idea/
 .vscode/
+.github/
 data/*.pkl
 data/*.index
 data/*.faiss
