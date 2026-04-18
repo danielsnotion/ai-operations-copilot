@@ -15,7 +15,7 @@ It combines:
 * Tool-based analytics
 * Conversation memory
 * Feedback-driven adaptation
-* Dual orchestration (LangChain + LangGraph)
+* Orchestration (LangChain, LangGraph, CrewAI)
 
 ---
 
@@ -338,8 +338,8 @@ The system supports **two access modes**:
 * User logs in with:
 
   ```
-  Username: admin
-  Password: admin123
+  Username: daniel
+  Password: <CONTACT ME>
   ```
 * System uses **internal OpenAI API key**
 
