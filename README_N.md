@@ -1,10 +1,62 @@
-# 🤖 AI Operations Copilot
+# 🤖 AI Operations Copilot — Revenue Anomaly Investigation Agent
 
 An **Agentic AI system** for business insights using **LangGraph, LangChain, and CrewAI**, powered by **RAG (Retrieval-Augmented Generation)** and enhanced with **LangSmith observability**.
 
 ---
 
-## 🚀 Features
+## 📌 Overview
+
+This project implements a **production-grade AI Operations Copilot** that assists business analysts in investigating revenue anomalies.
+
+It combines:
+
+* LLM reasoning
+* Retrieval-Augmented Generation (RAG)
+* Tool-based analytics
+* Conversation memory
+* Feedback-driven adaptation
+* Dual orchestration (LangChain + LangGraph)
+
+---
+
+## 🎯 Problem Statement
+
+Business teams struggle to quickly diagnose:
+
+* Revenue drops
+* Regional performance issues
+* Refund anomalies
+
+Manual workflows are slow, inconsistent, and lack explainability.
+
+---
+
+## ✅ Solution
+
+An AI Copilot that:
+
+* Provides **data-driven insights**
+* Uses **tools for accurate computation**
+* Maintains **context-aware conversations**
+* Adapts using **user feedback**
+* Enforces **safety-first behavior**
+
+---
+
+## 👤 User Persona
+
+**Primary User:** Business / Operations Analyst
+
+### Workflow:
+
+* Ask analytical questions
+* Investigate anomalies
+* Validate insights
+* Generate reports
+
+---
+
+## 🚀 Core Capabilities & Features
 
 ### 🧠 Multi-Agent Framework Support
 
@@ -18,6 +70,28 @@ An **Agentic AI system** for business insights using **LangGraph, LangChain, and
 * Automatic embedding generation
 * Semantic search using vector database
 * Context-aware answers
+
+### 🛠️ Tool-Based Reasoning
+
+* Revenue trend analysis
+* Region comparison
+* Anomaly detection
+
+### 🧠 Memory & Context
+
+* Multi-turn conversation support
+* Context retention
+
+### 🔁 Feedback Adaptation
+
+* 👍 / 👎 feedback collection
+* Improves future responses
+
+### 🛡️ Safety Enforcement
+
+* Refuses unsafe requests
+* Avoids hallucination
+* Explains uncertainty
 
 ### 💬 ChatGPT-like UI
 
@@ -252,6 +326,37 @@ Includes:
 * Tool usage
 * LLM calls
 * Latency
+
+---
+
+## 🔐 Authentication & API Key Handling
+
+The system supports **two access modes**:
+
+### 1️⃣ Login Mode (Demo Mode)
+
+* User logs in with:
+
+  ```
+  Username: admin
+  Password: admin123
+  ```
+* System uses **internal OpenAI API key**
+
+---
+
+### 2️⃣ API Key Mode (User Mode)
+
+* User provides their own OpenAI API key
+* System uses user-provided key for inference
+
+---
+
+### 🔒 Security Notes
+
+* API keys are **never logged**
+* External keys are stored **only in session**
+* No sensitive data is persisted
 
 ---
 
