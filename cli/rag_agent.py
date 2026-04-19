@@ -18,9 +18,36 @@ class RAGAgent:
         self.retriever = DataRetriever("data/sales_data.csv")
 
     def format_context(self, docs):
+        if not docs:
+            return "No additional context available"
+
+        # Handle system messages
+        if len(docs) == 1 and docs[0] in [
+            "Vector DB not initialized",
+            "No relevant documents found",
+            "Empty query"
+        ]:
+            return "No additional context available"
+
         return "\n\n".join([f"- {doc}" for doc in docs])
 
-    def generate_prompt(self, query, context):
+    def generate_prompt(self, query, context, use_rag=True):
+        if not use_rag:
+            return f"""
+You are an AI Operations Copilot.
+
+Answer based on general knowledge.
+
+Question:
+{query}
+
+Output format:
+- Summary
+- Key Insights
+- Confidence Level
+- Suggested Actions
+"""
+
         return f"""
 You are an AI Operations Copilot.
 
@@ -40,17 +67,22 @@ Output format:
 - Suggested Actions
 """
 
-    def run(self, query):
+    def run(self, query, use_rag=True):
         logger.info(f"User Query: {query}")
 
-        retrieved_docs = self.retriever.retrieve(query)
-        logger.info(f"Retrieved Docs: {retrieved_docs}")
+        # 🔹 WITHOUT RAG
+        if not use_rag:
+            prompt = self.generate_prompt(query, context=None, use_rag=False)
 
-        context = self.format_context(retrieved_docs)
+        # 🔹 WITH RAG
+        else:
+            retrieved_docs = self.retriever.retrieve(query)
+            logger.info(f"Retrieved Docs: {retrieved_docs}")
 
-        logger.info(f"Retrieved Context: {context}")
+            context = self.format_context(retrieved_docs)
+            logger.info(f"Context: {context}")
 
-        prompt = self.generate_prompt(query, context)
+            prompt = self.generate_prompt(query, context, use_rag=True)
 
         response = client.chat.completions.create(
             model=MODEL_NAME,
@@ -77,8 +109,12 @@ def run_cli():
         if query.lower() == "exit":
             break
 
-        result = agent.run(query)
-        print(f"\nAgent Response:\n{result}\n")
+        print("\n--- WITHOUT RAG ---")
+        print(agent.run(query, use_rag=False))
+
+        print("\n--- WITH RAG ---")
+        print(agent.run(query, use_rag=True))
+        print("\n" + "="*50 + "\n")
 
 
 if __name__ == "__main__":

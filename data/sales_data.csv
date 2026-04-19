@@ -1,11 +1,2 @@
 date,region,product,revenue,orders,refunds
 2026-03-01,North,Product_A,12000,120,5
-2026-03-01,South,Product_A,10000,100,8
-2026-03-02,North,Product_A,11500,115,6
-2026-03-02,South,Product_A,9800,95,10
-2026-03-08,North,Product_A,8000,80,12
-2026-03-08,South,Product_A,7000,70,15
-2026-03-09,North,Product_A,7800,75,14
-2026-03-09,South,Product_A,6900,68,16
-2026-03-10,North,Product_A,7700,74,15
-2026-03-10,South,Product_A,6800,65,18
