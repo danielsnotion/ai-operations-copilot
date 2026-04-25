@@ -124,25 +124,7 @@ An AI Copilot that:
 
 ## 🏗️ Architecture
 
-```
-UI (Streamlit)
-   ↓
-FastAPI Backend
-   ↓
-AgentV2
-   ├── LangGraph Agent
-   ├── LangChain Agent
-   └── CrewAI Agent
-   ↓
-Core Components:
-    - Memory
-    - Embedding Manager (FAISS)
-    - Tools
-    - Planner
-    - Feedback
-   ↓
-CSV Data (RAG)
-```
+![Architecture Diagram](./Capston_Architecture.png)
 
 ---
 
@@ -252,7 +234,7 @@ cd ai-operations-copilot
 ### 2️⃣ Create Virtual Environment
 
 ```
-python -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 ```
 
